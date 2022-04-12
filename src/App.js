@@ -1,20 +1,42 @@
-import {useState} from "react"
+import {useState, useEffect} from "react"
 import './App.css';
 
 function App() {
   const initialValues = {username: '', email: '', password: ''}
   const [formValues, setformValues] = useState(initialValues)
+  const [formErrors, setFormErrors] = useState({})
+  const [isSubmit, setIsSubmit] = useState(false)
 
   const handleChange = (e) => {
     const {name, value} = e.target
     setformValues({...formValues, [name]: value})
-    console.log(formValues)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    setFormErrors(validate(formValues))
+    setIsSubmit(true)
+  }
 
+  useEffect(()=> {
+    console.log(formErrors)
+    if(Object.keys(formErrors).length === 0 && isSubmit){
+      console.log(formValues)
+    }
+  }, [formErrors])
 
+  const validate = (values) => {
+    const errors = {}
+    if(!values.username){
+      errors.username = "Username is required!"
+    }
+    if(!values.email){
+      errors.email = "Email is required!"
+    }
+    if(!values.password){
+      errors.password = "Password is required!"
+    }
+    return errors
   }
 
   return (
@@ -28,7 +50,7 @@ function App() {
             <label>Username</label>
             <input 
               type="text" 
-              name="usename" 
+              name="username" 
               placeholder='Username'
               value={formValues.username}
               onChange={handleChange}
